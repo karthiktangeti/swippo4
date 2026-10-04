@@ -1,0 +1,74 @@
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html { scroll-behavior:smooth }
+body { font-family:'Plus Jakarta Sans',sans-serif; color:#111827; background:#fff; -webkit-font-smoothing:antialiased }
+h1,h2,h3,h4,h5 { font-family:'Syne',sans-serif }
+a { text-decoration:none; color:inherit }
+button { cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif }
+input,select,textarea { font-family:'Plus Jakarta Sans',sans-serif }
+
+:root {
+  --v:  #4F46E5;  --v2: #3730A3;  --vl: #EEF2FF;  --vg: rgba(79,70,229,.2);
+  --r:  #059669;  --r2: #047857;  --rl: #ECFDF5;  --rg: rgba(5,150,105,.2);
+  --ink:#111827;  --ink2:#1F2937; --slate:#6B7280; --muted:#9CA3AF;
+  --border:#E5E7EB; --off:#F9FAFB; --white:#fff;
+  --red:#EF4444;  --amber:#F59E0B;
+  --nav-h:68px;
+  --radius:12px; --radius-lg:20px; --radius-xl:28px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.12);
+  --shadow-xl: 0 20px 60px rgba(0,0,0,.18);
+}
+
+/* Buttons */
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:.45rem; padding:.55rem 1.3rem; border-radius:var(--radius); font-weight:600; font-size:.88rem; border:none; transition:all .18s; cursor:pointer; letter-spacing:.01em; white-space:nowrap }
+.btn-v  { background:var(--v);  color:#fff; box-shadow:0 2px 8px var(--vg) }
+.btn-v:hover  { background:var(--v2); transform:translateY(-1px); box-shadow:0 4px 14px var(--vg) }
+.btn-r  { background:var(--r);  color:#fff; box-shadow:0 2px 8px var(--rg) }
+.btn-r:hover  { background:var(--r2); transform:translateY(-1px); box-shadow:0 4px 14px var(--rg) }
+.btn-ghost { background:transparent; border:1.5px solid var(--border); color:var(--ink) }
+.btn-ghost:hover { border-color:var(--ink); background:var(--ink); color:#fff }
+.btn-del { background:#FEF2F2; border:1px solid #FECACA; color:var(--red) }
+.btn-del:hover { background:var(--red); color:#fff }
+.btn-sm { padding:.38rem .9rem; font-size:.8rem; border-radius:9px }
+.btn-lg { padding:.78rem 1.8rem; font-size:.97rem; border-radius:14px }
+.btn:disabled { opacity:.5; cursor:not-allowed; transform:none !important; box-shadow:none !important }
+
+/* Badges */
+.bv { display:inline-flex; align-items:center; gap:.3rem; background:var(--vl); color:var(--v); font-size:.7rem; font-weight:700; padding:.2rem .6rem; border-radius:20px; letter-spacing:.03em }
+.br { display:inline-flex; align-items:center; gap:.3rem; background:var(--rl); color:var(--r2); font-size:.7rem; font-weight:700; padding:.2rem .6rem; border-radius:20px; letter-spacing:.03em }
+
+/* Layout */
+.pg { max-width:1240px; margin:0 auto; padding:0 1.5rem }
+
+/* Forms */
+.fg { display:flex; flex-direction:column; gap:.3rem }
+.fg label { font-size:.75rem; font-weight:700; color:var(--slate); letter-spacing:.04em; text-transform:uppercase }
+.fg input, .fg select, .fg textarea {
+  padding:.65rem 1rem; border:1.5px solid var(--border); border-radius:var(--radius);
+  font-size:.92rem; color:var(--ink); background:#fff; outline:none;
+  transition:border-color .2s, box-shadow .2s
+}
+.fg input:focus, .fg select:focus, .fg textarea:focus {
+  border-color:var(--v); box-shadow:0 0 0 3px var(--vg)
+}
+.fg-r input:focus, .fg-r select:focus, .fg-r textarea:focus {
+  border-color:var(--r); box-shadow:0 0 0 3px var(--rg)
+}
+.fg input::placeholder { color:#D1D5DB }
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:.9rem }
+
+/* Spinner */
+.spin { width:36px; height:36px; border:3px solid var(--border); border-top-color:var(--v); border-radius:50%; animation:spin .75s linear infinite }
+.spin-sm { width:16px; height:16px; border-width:2px; border-top-color:#fff }
+@keyframes spin { to { transform:rotate(360deg) } }
+
+/* Alert */
+.alert { padding:.85rem 1rem; border-radius:var(--radius); font-size:.88rem; display:flex; align-items:flex-start; gap:.6rem; line-height:1.5 }
+.alert-err { background:#FFF5F5; border:1px solid #FECACA; color:#B91C1C }
+.alert-ok  { background:var(--rl); border:1px solid #A7F3D0; color:var(--r2) }
+
+/* Empty state */
+.empty { text-align:center; padding:5rem 2rem }
+.empty .ico { font-size:3.5rem; margin-bottom:1rem; display:block }
+.empty h3 { font-size:1.3rem; margin-bottom:.4rem }
+.empty p  { color:var(--muted); margin-bottom:1.5rem; font-size:.92rem }

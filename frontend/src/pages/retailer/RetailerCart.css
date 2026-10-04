@@ -1,0 +1,56 @@
+.rc-page { min-height:100vh; background:var(--off) }
+.rc-wrap  { max-width:1100px; margin:0 auto; padding:calc(var(--nav-h) + 2rem) 1.5rem 4rem }
+
+.rc-steps { display:flex; align-items:center; margin-bottom:2rem }
+.rc-step  { display:flex; align-items:center; gap:.5rem; font-size:.86rem; font-weight:600; color:var(--muted) }
+.rc-step span { width:26px; height:26px; border-radius:50%; background:var(--border); color:var(--muted); display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; flex-shrink:0 }
+.rc-step-on   { color:var(--r2) }
+.rc-step-on span { background:var(--r); color:#fff }
+.rc-line  { flex:1; height:2px; background:var(--border); margin:0 .8rem }
+.rc-line-on { background:var(--r) }
+
+.rc-grid { display:grid; grid-template-columns:1fr 300px; gap:1.5rem; align-items:start }
+.rc-card { background:#fff; border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden }
+.rc-card-hd { display:flex; justify-content:space-between; align-items:center; padding:1.2rem 1.5rem; border-bottom:1px solid var(--border) }
+.rc-card-hd h3 { font-size:1.05rem; color:var(--ink) }
+.rc-card-hd h3 span { color:var(--muted); font-weight:400 }
+.rc-items { padding:.5rem 0 }
+.rc-item  { display:flex; align-items:center; gap:.9rem; padding:.9rem 1.5rem; border-bottom:1px solid var(--off) }
+.rc-item:last-child { border-bottom:none }
+.rc-em   { font-size:1.8rem; background:var(--off); padding:.5rem; border-radius:9px; flex-shrink:0 }
+.rc-info { flex:1; min-width:0 }
+.rc-nm   { font-weight:700; font-size:.88rem; color:var(--ink) }
+.rc-vd   { font-size:.73rem; color:var(--muted) }
+.rc-pu   { font-size:.8rem; color:var(--slate) }
+.rc-qty  { display:flex; align-items:center; gap:.45rem; flex-shrink:0 }
+.rc-qty button { width:26px; height:26px; border-radius:7px; border:1.5px solid var(--border); background:#fff; font-size:1rem; display:flex; align-items:center; justify-content:center; transition:all .15s }
+.rc-qty button:hover { border-color:var(--r); background:var(--rl) }
+.rc-qty span { font-family:'Syne',sans-serif; font-weight:700; min-width:22px; text-align:center }
+.rc-sub  { font-family:'Syne',sans-serif; font-weight:700; font-size:.95rem; color:var(--ink); min-width:65px; text-align:right; flex-shrink:0 }
+.rc-rm   { background:none; border:none; color:var(--muted); font-size:.85rem; padding:.3rem; border-radius:6px; transition:all .15s; flex-shrink:0 }
+.rc-rm:hover { color:var(--red); background:#FEF2F2 }
+
+.rc-checkout { padding:1.5rem }
+.rc-checkout h3 { font-size:1.05rem; color:var(--ink); margin-bottom:1.2rem }
+.rc-checkout textarea { width:100%; padding:.7rem 1rem; border:1.5px solid var(--border); border-radius:var(--radius); font-family:inherit; font-size:.92rem; outline:none; transition:border-color .2s }
+.rc-checkout textarea:focus { border-color:var(--r); box-shadow:0 0 0 3px var(--rg) }
+
+.pay-opts { display:flex; flex-direction:column; gap:.5rem; margin-top:.4rem }
+.pay-opt  { display:flex; align-items:center; gap:.9rem; padding:.9rem 1rem; border:1.5px solid var(--border); border-radius:12px; cursor:pointer; transition:all .2s }
+.pay-opt-on { border-color:var(--r); background:var(--rl) }
+.pay-ic  { font-size:1.3rem }
+.pay-lb  { font-weight:700; font-size:.88rem; color:var(--ink) }
+.pay-sub { font-size:.73rem; color:var(--muted) }
+.pay-ck  { margin-left:auto; color:var(--r); font-weight:700 }
+
+.rc-sum  { background:#fff; border:1px solid var(--border); border-radius:var(--radius-lg); padding:1.5rem; position:sticky; top:calc(var(--nav-h) + 1rem) }
+.rc-sum h3 { font-size:1.05rem; color:var(--ink); margin-bottom:1.2rem; padding-bottom:.8rem; border-bottom:1px solid var(--border) }
+.rc-sum-rows { display:flex; flex-direction:column; gap:.7rem; margin-bottom:1.2rem }
+.rc-sum-row  { display:flex; justify-content:space-between; font-size:.88rem; color:var(--slate) }
+.rc-note { font-size:.76rem; color:var(--r2); background:var(--rl); padding:.4rem .7rem; border-radius:7px }
+.rc-sum-total { display:flex; justify-content:space-between; font-family:'Syne',sans-serif; font-weight:800; font-size:1.15rem; color:var(--ink); border-top:2px solid var(--border); padding-top:.8rem }
+.rc-cta { width:100%; justify-content:center; padding:.78rem; margin-bottom:.6rem }
+.rc-cont { display:block; text-align:center; font-size:.82rem; color:var(--r2); font-weight:600; margin-top:.4rem }
+.rc-cont:hover { text-decoration:underline }
+
+@media(max-width:860px) { .rc-grid{grid-template-columns:1fr} .rc-sum{position:static} }

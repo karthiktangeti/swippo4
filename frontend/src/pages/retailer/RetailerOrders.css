@@ -1,0 +1,58 @@
+.ro-page { min-height:100vh; background:var(--off) }
+.ro-wrap  { max-width:1000px; margin:0 auto; padding:calc(var(--nav-h) + 2rem) 1.5rem 4rem }
+.ro-center{ display:flex; justify-content:center; padding:6rem }
+.ro-hdr   { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem }
+.ro-hdr h1 { font-size:1.8rem; color:var(--ink); letter-spacing:-1px }
+.ro-list  { display:flex; flex-direction:column; gap:.8rem }
+
+.ro-row { background:#fff; border:1.5px solid var(--border); border-radius:var(--radius-lg); padding:1.3rem 1.5rem; display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:all .22s }
+.ro-row:hover { transform:translateY(-2px); box-shadow:var(--shadow-lg); border-color:var(--r) }
+.ro-id   { font-family:'Syne',sans-serif; font-weight:700; font-size:.95rem; color:var(--ink) }
+.ro-dt   { font-size:.76rem; color:var(--muted); margin:.15rem 0 .5rem }
+.ro-ems  { display:flex; gap:.2rem; font-size:1.2rem; margin-bottom:.25rem }
+.ro-names{ font-size:.8rem; color:var(--slate); max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.ro-right{ display:flex; flex-direction:column; align-items:flex-end; gap:.45rem }
+.ro-st   { padding:.28rem .75rem; border-radius:20px; font-size:.72rem; font-weight:700; text-transform:capitalize; letter-spacing:.02em }
+.ro-amt  { font-family:'Syne',sans-serif; font-size:1.15rem; font-weight:800; color:var(--ink) }
+.ro-track{ font-size:.8rem; color:var(--r2); font-weight:600 }
+
+/* ORDER DETAIL */
+.od-hdr  { display:flex; align-items:center; gap:1.5rem; margin-bottom:2rem; flex-wrap:wrap }
+.od-back { font-size:.86rem; color:var(--r2); font-weight:600 }
+.od-back:hover { text-decoration:underline }
+.od-title h1 { font-size:1.6rem; color:var(--ink); letter-spacing:-1px }
+.od-title p  { font-size:.8rem; color:var(--muted) }
+.od-status { padding:.35rem 1rem; border-radius:20px; font-size:.74rem; font-weight:700; margin-left:auto }
+
+.od-grid { display:grid; grid-template-columns:1fr 260px; gap:1.5rem; align-items:start }
+.od-card { background:#fff; border:1px solid var(--border); border-radius:var(--radius-lg); padding:1.5rem; margin-bottom:1rem }
+.od-card h3 { font-size:.95rem; color:var(--ink); margin-bottom:1rem; padding-bottom:.6rem; border-bottom:1px solid var(--border) }
+
+.tracker { display:flex; overflow-x:auto; padding-bottom:.5rem; margin-bottom:1rem }
+.tr-s { display:flex; flex-direction:column; align-items:center; flex:1; min-width:58px; position:relative }
+.tr-c { width:36px; height:36px; border-radius:50%; background:var(--off); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:.8rem; z-index:1; transition:all .3s }
+.tr-done .tr-c { background:var(--r); border-color:var(--r) }
+.tr-cur  .tr-c { box-shadow:0 0 0 4px var(--rg) }
+.tr-l { font-size:.62rem; color:var(--muted); text-align:center; margin-top:.35rem; font-weight:500 }
+.tr-done .tr-l { color:var(--r2); font-weight:600 }
+.tr-line { position:absolute; top:18px; left:50%; right:-50%; height:2px; background:var(--border); z-index:0 }
+.tr-done .tr-line { background:var(--r) }
+
+.eta { display:flex; justify-content:space-between; align-items:center; background:var(--rl); border-radius:10px; padding:.7rem 1rem; font-size:.84rem; color:var(--r2); margin-bottom:1rem }
+.tl  { border-top:1px solid var(--border); padding-top:.9rem; display:flex; flex-direction:column; gap:.65rem }
+.tl-row { display:flex; gap:.7rem; align-items:flex-start }
+.tl-dot { width:8px; height:8px; border-radius:50%; background:var(--r); flex-shrink:0; margin-top:.3rem }
+.tl-msg { font-size:.85rem; color:var(--ink); font-weight:500 }
+.tl-time{ font-size:.72rem; color:var(--muted) }
+
+.od-item { display:flex; align-items:center; gap:.8rem; padding:.7rem; background:var(--off); border-radius:10px; margin-bottom:.5rem }
+.od-item-nm  { font-weight:700; font-size:.88rem; color:var(--ink) }
+.od-item-sub { font-size:.73rem; color:var(--muted) }
+.od-item-amt { font-family:'Syne',sans-serif; font-weight:700; color:var(--ink) }
+
+.od-rows { display:flex; flex-direction:column; gap:.6rem }
+.od-row  { display:flex; justify-content:space-between; font-size:.87rem; color:var(--slate) }
+.od-total{ font-family:'Syne',sans-serif; font-weight:800; font-size:1.05rem; color:var(--ink); border-top:1px solid var(--border); padding-top:.5rem }
+.od-addr { font-size:.9rem; color:var(--slate); line-height:1.65 }
+
+@media(max-width:860px) { .od-grid{grid-template-columns:1fr} }
