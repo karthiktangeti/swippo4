@@ -6,7 +6,18 @@ const cors = require("cors");
 const app = express();
 app.use(
   cors({
-    origin: "https://frontend-lime-six-23.vercel.app",
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://frontend-lime-six-23.vercel.app",
+      ];
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   }),
 );
