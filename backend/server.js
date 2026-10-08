@@ -9,7 +9,7 @@ app.use(
     origin: function (origin, callback) {
       const allowedOrigins = [
         "http://localhost:5173",
-        //"https://frontend-lime-six-23.vercel.app",
+        "https://frontend-lime-six-23.vercel.app",
       ];
 
       if (!origin || allowedOrigins.includes(origin)) {
