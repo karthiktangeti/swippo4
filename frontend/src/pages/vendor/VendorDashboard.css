@@ -68,6 +68,15 @@
 .vd-ni-out:hover { background:rgba(255,100,100,.1); color:#f87171 }
 .vd-ni-count { margin-left:auto; background:rgba(255,255,255,.1); color:rgba(255,255,255,.5); font-size:.68rem; font-weight:700; padding:.15rem .5rem; border-radius:20px }
 .vd-ni-badge { margin-left:auto; background:#F59E0B; color:#fff; font-size:.68rem; font-weight:700; padding:.15rem .5rem; border-radius:20px; min-width:20px; text-align:center }
+.review-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem }
+.review-card { background:#fff; border:1px solid var(--border); border-radius:var(--radius-lg); padding:1.2rem; box-shadow:var(--shadow) }
+.review-card-top { display:flex; justify-content:space-between; align-items:center; gap:.8rem }
+.review-product { display:flex; align-items:center; gap:.6rem; min-width:0 }
+.review-product span { font-size:1.5rem; background:var(--off); padding:.35rem; border-radius:8px }
+.review-product strong { color:var(--ink); font-size:.9rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.review-stars { color:var(--amber); letter-spacing:.05em; white-space:nowrap }
+.review-comment { color:var(--slate); font-size:.86rem; line-height:1.5; margin:1rem 0 .7rem }
+.review-meta { color:var(--muted); font-size:.72rem }
 
 /* ── VENDOR ORDERS LIST ── */
 .vo-list { display:flex; flex-direction:column; gap:.8rem }

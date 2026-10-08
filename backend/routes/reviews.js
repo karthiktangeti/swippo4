@@ -3,12 +3,13 @@ const router = express.Router();
 const { Order } = require('../models/CartOrder');
 const Product = require('../models/Product');
 const Review = require('../models/Review');
-const { auth, retailerOnly } = require('../middleware/auth');
+const { auth, retailerOnly, vendorOnly } = require('../middleware/auth');
 
-router.use(auth, retailerOnly);
+router.use(auth);
 
 router.get('/order/:orderId', async (req, res) => {
   try {
+    if (req.user.role !== 'retailer') return res.status(403).json({ message: 'Retailers only' });
     const reviews = await Review.find({ retailer: req.user.id, order: req.params.orderId });
     res.json(reviews);
   } catch (err) {
@@ -16,7 +17,19 @@ router.get('/order/:orderId', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.get('/vendor', vendorOnly, async (req, res) => {
+  try {
+    const reviews = await Review.find({ vendor: req.user.id })
+      .populate('retailer', 'name businessName')
+      .populate('product', 'name emoji')
+      .sort({ createdAt: -1 });
+    res.json(reviews);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.post('/', retailerOnly, async (req, res) => {
   try {
     const { orderId, productId, rating, comment = '' } = req.body;
     const numericRating = Number(rating);

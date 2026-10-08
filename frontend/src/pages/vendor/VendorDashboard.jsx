@@ -26,9 +26,10 @@ const STATUS_LABEL = {
 export default function VendorDashboard() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
-  const [tab,     setTab]     = useState('products')   // 'products' | 'orders'
+  const [tab,     setTab]     = useState('products')   // 'products' | 'orders' | 'reviews'
   const [prods,   setProds]   = useState([])
   const [orders,  setOrders]  = useState([])
+  const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
   const [ordLoad, setOrdLoad] = useState(false)
   const [selOrder,setSelOrder]= useState(null)         // expanded order detail
@@ -54,6 +55,7 @@ export default function VendorDashboard() {
   // load orders when tab switches
   useEffect(() => {
     if (tab === 'orders' && orders.length === 0) loadOrders()
+    if (tab === 'reviews') loadReviews()
   }, [tab])
 
   const loadProducts = async (silent = false) => {
@@ -71,6 +73,13 @@ export default function VendorDashboard() {
     try { const { data } = await api.get('/orders/vendor-orders'); setOrders(data) }
     catch (err) { toast.error('Failed to load orders: ' + (err.response?.data?.message || err.message)) }
     finally { setOrdLoad(false) }
+  }
+
+  const loadReviews = async () => {
+    try {
+      const { data } = await api.get('/reviews/vendor')
+      setReviews(data)
+    } catch (err) { toast.error(err.response?.data?.message || 'Failed to load reviews') }
   }
 
   const updateStatus = async (orderId, status) => {
@@ -145,6 +154,9 @@ export default function VendorDashboard() {
             <button className={`vd-ni ${tab==='orders'?'vd-ni-on':''}`} onClick={()=>setTab('orders')}>
               🧾 Orders Received
               {pendingOrders > 0 && <span className="vd-ni-badge">{pendingOrders}</span>}
+            </button>
+            <button className={`vd-ni ${tab==='reviews'?'vd-ni-on':''}`} onClick={()=>setTab('reviews')}>
+              ⭐ Reviews {reviews.length > 0 && <span className="vd-ni-count">{reviews.length}</span>}
             </button>
             <a className="vd-ni" href="#">📊 Analytics</a>
             <a className="vd-ni" href="#">⚙️ Settings</a>
@@ -342,6 +354,29 @@ export default function VendorDashboard() {
                     ))}
                   </div>
             }
+          </>}
+
+          {tab === 'reviews' && <>
+            <div className="vd-hdr">
+              <div><h2>Customer Reviews</h2><p>Ratings and feedback from retailers who received your products</p></div>
+              <button className="btn btn-ghost btn-sm" onClick={loadReviews}>🔄 Refresh</button>
+            </div>
+            {reviews.length === 0 ? (
+              <div className="empty"><span className="ico">⭐</span><h3>No reviews yet</h3><p>Reviews will appear here after retailers review delivered orders.</p></div>
+            ) : (
+              <div className="review-list">
+                {reviews.map(review => (
+                  <article className="review-card" key={review._id}>
+                    <div className="review-card-top">
+                      <div className="review-product"><span>{review.product?.emoji || '📦'}</span><strong>{review.product?.name || 'Product'}</strong></div>
+                      <div className="review-stars">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</div>
+                    </div>
+                    {review.comment && <p className="review-comment">“{review.comment}”</p>}
+                    <div className="review-meta">{review.retailer?.businessName || review.retailer?.name || 'Retailer'} · {new Date(review.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>
+                  </article>
+                ))}
+              </div>
+            )}
           </>}
         </main>
       </div>
