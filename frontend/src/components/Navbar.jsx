@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
+import api from '../utils/api'
 import toast from 'react-hot-toast'
 import './Navbar.css'
 
@@ -11,7 +12,10 @@ export default function Navbar() {
   const navigate = useNavigate()
   const location = useLocation()
   const [open, setOpen] = useState(false)
+  const [notifications, setNotifications] = useState([])
   const ref = useRef()
+  const isV = user?.role === 'vendor'
+  const isR = user?.role === 'retailer'
 
   useEffect(() => {
     const h = e => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
@@ -19,8 +23,14 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', h)
   }, [])
 
-  const isV = user?.role === 'vendor'
-  const isR = user?.role === 'retailer'
+  useEffect(() => {
+    if (!isR) return
+    const loadNotifications = () => api.get('/notifications').then(({ data }) => setNotifications(data)).catch(() => {})
+    loadNotifications()
+    const timer = setInterval(loadNotifications, 15000)
+    return () => clearInterval(timer)
+  }, [isR])
+
   const active = p => location.pathname === p ? 'nb-active' : ''
 
   const doLogout = () => { logout(); toast.success('Signed out'); navigate('/') }
@@ -49,7 +59,12 @@ export default function Navbar() {
 
         <div className="nb-r">
           {isR && (
-            <Link to="/retailer/cart" className="nb-cart">
+            <Link to="/retailer/wishlist" className="nb-cart" title="Wishlist">
+              ♥{notifications.filter(n => !n.read).length > 0 && <span className="nb-dot">{notifications.filter(n => !n.read).length > 9 ? '9+' : notifications.filter(n => !n.read).length}</span>}
+            </Link>
+          )}
+          {isR && (
+            <Link to="/retailer/cart" className="nb-cart" title="Cart">
               🛒{itemCount > 0 && <span className="nb-dot">{itemCount > 9 ? '9+' : itemCount}</span>}
             </Link>
           )}
@@ -77,6 +92,7 @@ export default function Navbar() {
                   {isR && <>
                     <Link to="/retailer/products" className="nb-item" onClick={()=>setOpen(false)}>🏪 Browse</Link>
                     <Link to="/retailer/orders"   className="nb-item" onClick={()=>setOpen(false)}>📦 My Orders</Link>
+                    <Link to="/retailer/wishlist" className="nb-item" onClick={()=>setOpen(false)}>♥ Wishlist {notifications.filter(n => !n.read).length ? `(${notifications.filter(n => !n.read).length})` : ''}</Link>
                     <Link to="/retailer/cart"     className="nb-item" onClick={()=>setOpen(false)}>🛒 Cart {itemCount>0?`(${itemCount})`:''}</Link>
                   </>}
                   <div className="nb-sep"/>

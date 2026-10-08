@@ -9,6 +9,7 @@ import VendorDashboard  from './pages/vendor/VendorDashboard'
 import RetailerProducts from './pages/retailer/RetailerProducts'
 import RetailerCart     from './pages/retailer/RetailerCart'
 import RetailerOrders, { OrderDetail } from './pages/retailer/RetailerOrders'
+import Wishlist from './pages/retailer/Wishlist'
 import Chatbot from './components/Chatbot'
 
 function Guard({ role, children }) {
@@ -29,6 +30,7 @@ function AppRoutes() {
       <Route path="/retailer/cart"        element={<Guard role="retailer"><RetailerCart /></Guard>} />
       <Route path="/retailer/orders"      element={<Guard role="retailer"><RetailerOrders /></Guard>} />
       <Route path="/retailer/orders/:id"  element={<Guard role="retailer"><OrderDetail /></Guard>} />
+      <Route path="/retailer/wishlist"    element={<Guard role="retailer"><Wishlist /></Guard>} />
       <Route path="*"                     element={<Navigate to="/" replace />} />
     </Routes>
   )

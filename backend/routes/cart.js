@@ -17,12 +17,20 @@ router.get('/', auth, retailerOnly, async (req, res) => {
 router.post('/add', auth, retailerOnly, async (req, res) => {
   try {
     const { productId, quantity=1 } = req.body;
-    const product = await Product.findById(productId);
-    if (!product) return res.status(404).json({ message: 'Product not found' });
+    const requestedQuantity = Number(quantity);
+    if (!Number.isInteger(requestedQuantity) || requestedQuantity < 1) {
+      return res.status(400).json({ message: 'Quantity must be a positive whole number' });
+    }
+    const product = await Product.findOne({ _id: productId, active: true, inStock: true });
+    if (!product) return res.status(404).json({ message: 'Product not found or unavailable' });
     let cart = await Cart.findOne({ user: req.user.id }) || new Cart({ user: req.user.id, items: [] });
     const idx = cart.items.findIndex(i => i.product.toString() === productId);
-    if (idx >= 0) cart.items[idx].quantity += +quantity;
-    else cart.items.push({ product: productId, quantity: +quantity, price: product.price });
+    const newQuantity = idx >= 0 ? cart.items[idx].quantity + requestedQuantity : requestedQuantity;
+    if (newQuantity > product.stock) {
+      return res.status(400).json({ message: `Only ${product.stock} ${product.unit} available` });
+    }
+    if (idx >= 0) cart.items[idx].quantity = newQuantity;
+    else cart.items.push({ product: productId, quantity: requestedQuantity, price: product.price });
     await cart.save();
     await cart.populate('items.product');
     res.json({ items: cart.items, total: total(cart.items) });
@@ -32,10 +40,24 @@ router.post('/add', auth, retailerOnly, async (req, res) => {
 router.put('/update', auth, retailerOnly, async (req, res) => {
   try {
     const { productId, quantity } = req.body;
+    const requestedQuantity = Number(quantity);
     const cart = await Cart.findOne({ user: req.user.id });
     if (!cart) return res.status(404).json({ message: 'Cart not found' });
-    if (+quantity <= 0) cart.items = cart.items.filter(i => i.product.toString() !== productId);
-    else { const it = cart.items.find(i => i.product.toString() === productId); if (it) it.quantity = +quantity; }
+    if (!Number.isInteger(requestedQuantity)) {
+      return res.status(400).json({ message: 'Quantity must be a whole number' });
+    }
+    if (requestedQuantity <= 0) cart.items = cart.items.filter(i => i.product.toString() !== productId);
+    else {
+      const it = cart.items.find(i => i.product.toString() === productId);
+      if (it) {
+        const product = await Product.findOne({ _id: productId, active: true, inStock: true });
+        if (!product) return res.status(400).json({ message: 'Product is no longer available' });
+        if (requestedQuantity > product.stock) {
+          return res.status(400).json({ message: `Only ${product.stock} ${product.unit} available` });
+        }
+        it.quantity = requestedQuantity;
+      }
+    }
     await cart.save();
     await cart.populate('items.product');
     res.json({ items: cart.items, total: total(cart.items) });

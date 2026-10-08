@@ -1,0 +1,21 @@
+.wl-page { min-height:100vh; background:var(--off) }
+.wl-main { max-width:1100px; margin:0 auto; padding:calc(var(--nav-h) + 2.4rem) 1.5rem 3rem }
+.wl-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.6rem }
+.wl-head h1 { font-size:2rem; margin-top:.2rem }
+.eyebrow { color:var(--r2); font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; font-weight:700 }
+.wl-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem }
+.wl-alerts { background:#fff; border:1px solid var(--border); border-radius:var(--radius-lg); padding:1rem; margin-bottom:1.5rem }
+.wl-alert-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:.7rem }
+.wl-alert-head h2 { font-size:1rem }
+.wl-alert { display:flex; gap:.7rem; padding:.7rem; border-radius:10px; color:var(--slate) }
+.wl-alert-new { background:var(--rl); color:var(--ink) }
+.wl-alert > span { font-size:1.2rem }
+.wl-alert strong { font-size:.82rem }.wl-alert p { font-size:.8rem; margin:.15rem 0 }.wl-alert small { color:var(--muted); font-size:.68rem }
+.wl-card { background:#fff; border:1px solid var(--border); border-radius:var(--radius-lg); padding:1rem; display:flex; align-items:center; gap:.8rem; box-shadow:var(--shadow) }
+.wl-emoji { font-size:2.2rem; width:58px; height:58px; display:flex; align-items:center; justify-content:center; background:var(--off); border-radius:12px; flex-shrink:0 }
+.wl-info { flex:1; min-width:0; display:flex; flex-direction:column; gap:.18rem }
+.wl-info small { color:var(--muted); font-size:.65rem; text-transform:uppercase; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.wl-info h3 { font-size:.92rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.wl-info strong { font-family:'Syne',sans-serif; font-size:1rem }
+.wl-stock,.wl-out { font-size:.7rem; font-weight:700 }
+.wl-stock { color:var(--r2) }.wl-out { color:var(--red) }

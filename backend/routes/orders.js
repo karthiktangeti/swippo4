@@ -1,6 +1,7 @@
 const express = require('express');
 const router  = express.Router();
 const { Cart, Order } = require('../models/CartOrder');
+const Product = require('../models/Product');
 const { auth, retailerOnly, vendorOnly } = require('../middleware/auth');
 
 // ── RETAILER: Place order ──────────────────────────────────────────────────
@@ -11,26 +12,65 @@ router.post('/place', auth, retailerOnly, async (req, res) => {
 
     const cart = await Cart.findOne({ user: req.user.id }).populate('items.product');
     if (!cart?.items?.length) return res.status(400).json({ message: 'Cart is empty' });
+    if (cart.items.some(item => !item.product)) {
+      return res.status(400).json({ message: 'One or more products in your cart are no longer available' });
+    }
 
     const totalAmount = cart.items.reduce((s, i) => s + i.price * i.quantity, 0);
+    const reserved = [];
 
-    const order = await Order.create({
-      retailer: req.user.id,
-      items: cart.items.map(i => ({
-        product:    i.product._id,
-        name:       i.product.name,
-        quantity:   i.quantity,
-        price:      i.price,
-        emoji:      i.product.emoji,
-        vendorName: i.product.companyName || i.product.vendorName,
-        vendorId:   i.product.vendor   // ✅ KEY FIX — save vendor reference
-      })),
-      totalAmount,
-      paymentMethod,
-      deliveryAddress,
-      paymentStatus: paymentMethod === 'cash' ? 'pending' : 'paid',
-      timeline: [{ status: 'placed', message: 'Order placed successfully', time: new Date() }]
-    });
+    // Reserve each line atomically so two retailers cannot buy the same stock.
+    for (const item of cart.items) {
+      const stockUpdate = await Product.updateOne(
+        { _id: item.product._id, active: true, inStock: true, stock: { $gte: item.quantity } },
+        { $inc: { stock: -item.quantity } },
+      );
+      if (stockUpdate.modifiedCount !== 1) {
+        for (const previous of reserved) {
+          await Product.findByIdAndUpdate(previous.productId, { $inc: { stock: previous.quantity }, inStock: true });
+        }
+        return res.status(400).json({ message: `${item.product.name} does not have enough stock available` });
+      }
+      reserved.push({ productId: item.product._id, quantity: item.quantity });
+
+      const updatedProduct = await Product.findById(item.product._id).select('stock');
+      if (!updatedProduct) {
+        for (const previous of reserved) {
+          await Product.findByIdAndUpdate(previous.productId, { $inc: { stock: previous.quantity }, inStock: true });
+        }
+        return res.status(500).json({ message: 'Unable to verify inventory update' });
+      }
+      await Product.updateOne(
+        { _id: updatedProduct._id },
+        { $set: { inStock: updatedProduct.stock > 0 } },
+      );
+    }
+
+    let order;
+    try {
+      order = await Order.create({
+        retailer: req.user.id,
+        items: cart.items.map(i => ({
+          product:    i.product._id,
+          name:       i.product.name,
+          quantity:   i.quantity,
+          price:      i.price,
+          emoji:      i.product.emoji,
+          vendorName: i.product.companyName || i.product.vendorName,
+          vendorId:   i.product.vendor
+        })),
+        totalAmount,
+        paymentMethod,
+        deliveryAddress,
+        paymentStatus: paymentMethod === 'cash' ? 'pending' : 'paid',
+        timeline: [{ status: 'placed', message: 'Order placed successfully', time: new Date() }]
+      });
+    } catch (error) {
+      for (const previous of reserved) {
+        await Product.findByIdAndUpdate(previous.productId, { $inc: { stock: previous.quantity }, inStock: true });
+      }
+      throw error;
+    }
 
     await Cart.findOneAndUpdate({ user: req.user.id }, { items: [] });
     res.status(201).json(order);
