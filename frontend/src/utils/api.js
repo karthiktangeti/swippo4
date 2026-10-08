@@ -1,6 +1,6 @@
 import axios from "axios";
 const api = axios.create({
-  baseURL: "https://swippo4.onrender.com/api",
+  baseURL: import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "/api" : "https://swippo4.onrender.com/api"),
 });
 api.interceptors.request.use((cfg) => {
   const t = localStorage.getItem("sw_token");
