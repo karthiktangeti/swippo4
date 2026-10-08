@@ -28,6 +28,8 @@ app.use("/api/products", require("./routes/products"));
 app.use("/api/cart", require("./routes/cart"));
 app.use("/api/orders", require("./routes/orders"));
 app.use("/api/chatbot", require("./routes/chatbot"));
+app.use("/api/wishlist", require("./routes/wishlist"));
+app.use("/api/notifications", require("./routes/notifications"));
 
 app.get("/", (_, res) => res.json({ ok: true, msg: "Swippo API v4" }));
 
