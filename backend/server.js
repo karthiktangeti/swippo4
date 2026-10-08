@@ -9,7 +9,7 @@ app.use(
     origin: function (origin, callback) {
       const allowedOrigins = [
         "http://localhost:5173",
-        "https://frontend-lime-six-23.vercel.app",
+        //"https://frontend-lime-six-23.vercel.app",
       ];
 
       if (!origin || allowedOrigins.includes(origin)) {
@@ -30,6 +30,7 @@ app.use("/api/orders", require("./routes/orders"));
 app.use("/api/chatbot", require("./routes/chatbot"));
 app.use("/api/wishlist", require("./routes/wishlist"));
 app.use("/api/notifications", require("./routes/notifications"));
+app.use("/api/reviews", require("./routes/reviews"));
 
 app.get("/", (_, res) => res.json({ ok: true, msg: "Swippo API v4" }));
 

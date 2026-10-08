@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom'
 import api from '../../utils/api'
 import { useAuth } from '../../context/AuthContext'
 import Navbar from '../../components/Navbar'
+import toast from 'react-hot-toast'
 import './RetailerOrders.css'
 
 const STEPS = [{k:'placed',ic:'📋',l:'Placed'},{k:'confirmed',ic:'✅',l:'Confirmed'},{k:'processing',ic:'⚙️',l:'Processing'},{k:'shipped',ic:'📦',l:'Shipped'},{k:'out_for_delivery',ic:'🚚',l:'Out for Delivery'},{k:'delivered',ic:'🎉',l:'Delivered'}]
@@ -14,6 +15,10 @@ export function OrderDetail() {
   const navigate = useNavigate()
   const [order, setOrder] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [reviews, setReviews] = useState({})
+  const [reviewing, setReviewing] = useState(null)
+  const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' })
+  const [reviewSaving, setReviewSaving] = useState(false)
 
   useEffect(() => {
     if (!user) { navigate('/login/retailer'); return }
@@ -23,9 +28,29 @@ export function OrderDetail() {
   }, [id])
 
   const load = async () => {
-    try { const { data } = await api.get(`/orders/${id}`); setOrder(data) }
+    try {
+      const { data } = await api.get(`/orders/${id}`)
+      setOrder(data)
+      if (data.status === 'delivered') {
+        const reviewResponse = await api.get(`/reviews/order/${id}`)
+        setReviews(Object.fromEntries(reviewResponse.data.map(review => [review.product, review])))
+      }
+    }
     catch { navigate('/retailer/orders') }
     finally { setLoading(false) }
+  }
+
+  const submitReview = async productId => {
+    setReviewSaving(true)
+    try {
+      const { data } = await api.post('/reviews', { orderId: id, productId, ...reviewForm })
+      setReviews(current => ({ ...current, [productId]: data }))
+      setReviewing(null)
+      setReviewForm({ rating: 5, comment: '' })
+      toast.success('Thank you for your review!')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not submit review')
+    } finally { setReviewSaving(false) }
   }
 
   if (loading) return <div className="ro-page"><Navbar/><div className="ro-center"><div className="spin"/></div></div>
@@ -87,9 +112,26 @@ export function OrderDetail() {
                   <span style={{fontSize:'1.4rem'}}>{it.emoji||'📦'}</span>
                   <div style={{flex:1}}><div className="od-item-nm">{it.name}</div><div className="od-item-sub">{it.vendorName} · Qty {it.quantity}</div></div>
                   <div className="od-item-amt">₹{(it.price*it.quantity).toLocaleString()}</div>
+                  {order.status === 'delivered' && (
+                    reviews[it.product] ? <span className="od-reviewed">★ {reviews[it.product].rating}/5</span> :
+                    <button className="btn btn-r btn-sm od-review-btn" onClick={() => setReviewing(it.product)}>Review</button>
+                  )}
                 </div>
               ))}
             </div>
+            {reviewing && (
+              <div className="od-card od-review-card">
+                <h3>⭐ Review {order.items.find(item => item.product === reviewing)?.name}</h3>
+                <div className="od-stars">
+                  {[1,2,3,4,5].map(value => <button type="button" key={value} className={value <= reviewForm.rating ? 'od-star-on' : ''} onClick={() => setReviewForm(form => ({ ...form, rating: value }))}>★</button>)}
+                </div>
+                <textarea value={reviewForm.comment} onChange={event => setReviewForm(form => ({ ...form, comment: event.target.value }))} maxLength="1000" placeholder="Share your experience (optional)" />
+                <div className="od-review-actions">
+                  <button className="btn btn-ghost btn-sm" onClick={() => setReviewing(null)}>Cancel</button>
+                  <button className="btn btn-r btn-sm" disabled={reviewSaving} onClick={() => submitReview(reviewing)}>{reviewSaving ? 'Saving…' : 'Submit review'}</button>
+                </div>
+              </div>
+            )}
           </div>
 
           <div>

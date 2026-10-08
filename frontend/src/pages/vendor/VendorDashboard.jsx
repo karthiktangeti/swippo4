@@ -44,16 +44,26 @@ export default function VendorDashboard() {
     loadProducts()
   }, [])
 
+  useEffect(() => {
+    if (tab !== 'products') return
+    loadProducts(true)
+    const refresh = setInterval(() => loadProducts(true), 5000)
+    return () => clearInterval(refresh)
+  }, [tab])
+
   // load orders when tab switches
   useEffect(() => {
     if (tab === 'orders' && orders.length === 0) loadOrders()
   }, [tab])
 
-  const loadProducts = async () => {
-    setLoading(true)
-    try { const { data } = await api.get('/products/my'); setProds(data) }
+  const loadProducts = async (silent = false) => {
+    if (!silent) setLoading(true)
+    try {
+      const { data } = await api.get(`/products/my?_refresh=${Date.now()}`)
+      setProds(data)
+    }
     catch { toast.error('Failed to load products') }
-    finally { setLoading(false) }
+    finally { if (!silent) setLoading(false) }
   }
 
   const loadOrders = async () => {
@@ -164,7 +174,10 @@ export default function VendorDashboard() {
           {tab === 'products' && <>
             <div className="vd-hdr">
               <div><h2>Product Catalog</h2><p>Retailers browse and order these products</p></div>
-              <button className="btn btn-v" onClick={openAdd}>+ Add Product</button>
+              <div style={{display:'flex', gap:'.5rem'}}>
+                <button className="btn btn-ghost" onClick={() => loadProducts()}>↻ Refresh Stock</button>
+                <button className="btn btn-v" onClick={openAdd}>+ Add Product</button>
+              </div>
             </div>
 
             {loading
@@ -173,13 +186,14 @@ export default function VendorDashboard() {
                 ? <div className="empty"><span className="ico">📦</span><h3>No products yet</h3><p>Add your first product to start receiving bulk orders.</p><button className="btn btn-v" onClick={openAdd}>+ Add Product</button></div>
                 : <div className="vd-table-w">
                     <table className="vd-tbl">
-                      <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>MOQ</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+                      <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Rating</th><th>MOQ</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
                       <tbody>
                         {prods.map(p => (
                           <tr key={p._id}>
                             <td><div className="vt-row"><span className="vt-em">{p.emoji}</span><div><div className="vt-nm">{p.name}</div>{p.description&&<div className="vt-ds">{p.description.slice(0,38)}…</div>}</div></div></td>
                             <td><span className="vt-cat">{p.category}</span></td>
                             <td><div className="vt-pr">₹{p.price.toLocaleString()}</div>{p.mrp&&<div className="vt-mr">MRP ₹{p.mrp.toLocaleString()}</div>}</td>
+                            <td className="vt-n">★ {Number(p.rating || 0).toFixed(1)} <small>({p.reviews || 0})</small></td>
                             <td className="vt-n">{p.minOrder} {p.unit}</td>
                             <td className="vt-n">{p.stock}</td>
                             <td><button className={`vt-tog ${p.inStock?'vt-in':'vt-out'}`} onClick={()=>toggle(p)}>{p.inStock?'● In Stock':'○ Out of Stock'}</button></td>

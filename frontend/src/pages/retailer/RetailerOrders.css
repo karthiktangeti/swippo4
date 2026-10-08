@@ -56,3 +56,12 @@
 .od-addr { font-size:.9rem; color:var(--slate); line-height:1.65 }
 
 @media(max-width:860px) { .od-grid{grid-template-columns:1fr} }
+.od-review-btn { margin-left:.5rem; padding:.3rem .65rem }
+.od-reviewed { color:var(--amber); font-size:.75rem; font-weight:700; white-space:nowrap }
+.od-review-card { margin-top:1rem }
+.od-stars { display:flex; gap:.2rem; margin:.8rem 0 }
+.od-stars button { border:0; background:none; color:var(--border); font-size:1.7rem; padding:0; cursor:pointer }
+.od-stars button.od-star-on { color:var(--amber) }
+.od-review-card textarea { width:100%; min-height:90px; resize:vertical; border:1.5px solid var(--border); border-radius:10px; padding:.7rem; font:inherit; outline:none }
+.od-review-card textarea:focus { border-color:var(--r); box-shadow:0 0 0 3px var(--rg) }
+.od-review-actions { display:flex; justify-content:flex-end; gap:.5rem; margin-top:.7rem }

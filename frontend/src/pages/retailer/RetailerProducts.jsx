@@ -22,13 +22,33 @@ export default function RetailerProducts() {
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState('')
   const [total, setTotal] = useState(0)
+  const [wishlist, setWishlist] = useState({})
 
   const cat = params.get('category') || 'all'
 
-  useEffect(() => { fetch() }, [cat, sort])
+  useEffect(() => {
+    fetch()
+    api.get('/wishlist').then(({ data }) => setWishlist(Object.fromEntries(data.map(item => [item.product?._id, true])))).catch(() => {})
+    const refresh = setInterval(() => fetch(true), 5000)
+    return () => clearInterval(refresh)
+  }, [cat, sort])
 
-  const fetch = async () => {
-    setLoading(true)
+  const toggleWishlist = async p => {
+    try {
+      if (wishlist[p._id]) {
+        await api.delete(`/wishlist/${p._id}`)
+        setWishlist(current => ({ ...current, [p._id]: false }))
+        toast.success('Removed from wishlist')
+      } else {
+        await api.post(`/wishlist/${p._id}`)
+        setWishlist(current => ({ ...current, [p._id]: true }))
+        toast.success('Added to wishlist')
+      }
+    } catch (err) { toast.error(err.response?.data?.message || 'Could not update wishlist') }
+  }
+
+  const fetch = async (silent = false) => {
+    if (!silent) setLoading(true)
     try {
       const q = new URLSearchParams()
       if (cat !== 'all') q.set('category', cat)
@@ -39,7 +59,7 @@ export default function RetailerProducts() {
       setProds(data.products)
       setTotal(data.total || data.products.length)
     } catch { toast.error('Failed to load') }
-    finally { setLoading(false) }
+    finally { if (!silent) setLoading(false) }
   }
 
   const cartQty = id => { const it = cart.items.find(i=>(i.product?._id||i.product)===id); return it?.quantity||0 }
@@ -115,11 +135,13 @@ export default function RetailerProducts() {
                     {d>0 && <span className="pc-disc">{d}% OFF</span>}
                     <div className="pc-img">{p.emoji}</div>
                     <div className="pc-body">
+                        <button className={`pc-wish ${wishlist[p._id]?'pc-wish-on':''}`} onClick={() => toggleWishlist(p)} aria-label={wishlist[p._id] ? 'Remove from wishlist' : 'Add to wishlist'}>{wishlist[p._id] ? '♥' : '♡'}</button>
                       <div className="pc-vendor">{p.vendor?.companyName||p.companyName||p.vendorName}</div>
                       <h4 className="pc-name">{p.name}</h4>
                       <div className="pc-moq">Min. {p.minOrder} {p.unit}</div>
+                      <div className="pc-stock">{p.stock} {p.unit} available</div>
                       <div className="pc-stars">
-                        {'★'.repeat(Math.round(p.rating))}{'☆'.repeat(5-Math.round(p.rating))}
+                        {'★'.repeat(Math.round(p.rating || 0))}{'☆'.repeat(5-Math.round(p.rating || 0))}
                         <span>({p.reviews||0})</span>
                       </div>
                       <div className="pc-prices">
@@ -130,7 +152,7 @@ export default function RetailerProducts() {
                     <div className="pc-foot">
                       <div className="pc-qty-row">
                         <label>Qty</label>
-                        <input type="number" min={p.minOrder} className="pc-qty" value={qtys[p._id]??p.minOrder} onChange={e=>setQtys(q=>({...q,[p._id]:+e.target.value}))}/>
+                        <input type="number" min={p.minOrder} max={p.stock} className="pc-qty" value={qtys[p._id]??p.minOrder} onChange={e=>setQtys(q=>({...q,[p._id]:+e.target.value}))}/>
                         <span className="pc-unit">{p.unit}</span>
                       </div>
                       {cq>0 && <div className="pc-incart">✓ {cq} in cart</div>}
